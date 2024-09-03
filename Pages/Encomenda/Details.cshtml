@@ -156,7 +156,9 @@
     <!-- QR Code gerado -->
     <div>
         <h4>Código QR</h4>
-        <img id="qrCodeImage" src="?handler=GenerateQRCode&encomendaNumero=@Model.EncomendaModel.EncomendaNumero" alt="QR Code" />
+        <img id="qrCodeImage" src="@Url.Page("/Encomenda/Details", "GenerateQRCode", new { encomendaNumero = Model.EncomendaModel.EncomendaNumero })" alt="QR Code" />
+
+
 
 
     </div>

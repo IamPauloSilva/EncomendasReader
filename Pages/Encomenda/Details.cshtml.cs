@@ -49,28 +49,30 @@ namespace EncomendasProject.Pages.Encomenda
         }
         public IActionResult OnGetGenerateQRCode(string encomendaNumero)
         {
-            // Step 1: Initialize the QR Code generator
-            QRCodeGenerator qrGenerator = new QRCodeGenerator();
-
-            // Step 2: Create the QR Code data
-            QRCodeData qrCodeData = qrGenerator.CreateQrCode(encomendaNumero, QRCodeGenerator.ECCLevel.Q);
-
-            // Step 3: Use BitmapByteQRCode to generate a bitmap from the QR code data
-            BitmapByteQRCode qrCode = new BitmapByteQRCode(qrCodeData);
-            byte[] qrCodeBytes = qrCode.GetGraphic(20);
-
-            // Step 4: Convert the byte array to a Bitmap
-            using (MemoryStream ms = new MemoryStream(qrCodeBytes))
+            try
             {
-                using (Bitmap qrCodeImage = new Bitmap(ms))
+                if (string.IsNullOrEmpty(encomendaNumero))
                 {
-                    // Step 5: Save the bitmap to a stream and return it as a PNG file
-                    using (var stream = new MemoryStream())
-                    {
-                        qrCodeImage.Save(stream, ImageFormat.Png);
-                        return File(stream.ToArray(), "image/png");
-                    }
+                    return BadRequest("Encomenda número não fornecido.");
                 }
+
+                // Initialize QR Code generator
+                QRCodeGenerator qrGenerator = new QRCodeGenerator();
+
+                // Create QR Code data
+                QRCodeData qrCodeData = qrGenerator.CreateQrCode(encomendaNumero, QRCodeGenerator.ECCLevel.Q);
+
+                // Generate bitmap from QR Code data
+                BitmapByteQRCode qrCode = new BitmapByteQRCode(qrCodeData);
+                byte[] qrCodeBytes = qrCode.GetGraphic(20);
+
+                // Return QR Code as PNG
+                return File(qrCodeBytes, "image/png");
+            }
+            catch (Exception ex)
+            {
+                
+                return StatusCode(500, "Erro interno do servidor.");
             }
         }
     }
