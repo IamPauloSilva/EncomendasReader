@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace EncomendasProject.Pages.Reader
 {
+    [IgnoreAntiforgeryToken]
     public class ReaderModel : PageModel
     {
         private readonly ApplicationDbContext _context;

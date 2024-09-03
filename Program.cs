@@ -31,6 +31,7 @@ builder.Services.AddRazorPages()
         options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
         options.JsonSerializerOptions.MaxDepth = 64; 
     });
+
 var app = builder.Build();
 
 
