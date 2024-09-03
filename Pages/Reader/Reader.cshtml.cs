@@ -29,8 +29,7 @@ namespace EncomendasProject.Pages.Reader
             {
                 return new JsonResult(new { success = false, message = "QR Code data is missing." });
             }
-            Console.WriteLine(QRCodeData + "recebemos");
-            // Assume QR code data has the format "EncomendaNumber_WorkerNumber"
+
             var parts = QRCodeData.Split('_');
             if (parts.Length != 2)
             {
@@ -40,18 +39,15 @@ namespace EncomendasProject.Pages.Reader
             var encomendaNumero = parts[0];
             var workerNumberString = parts[1];
 
-            // Convert workerNumberString to integer
             if (!int.TryParse(workerNumberString, out var workerNumber))
             {
                 return new JsonResult(new { success = false, message = "Invalid worker number format." });
             }
 
-            // Fetch Encomenda
             Encomenda = await _context.Encomendas
                 .Include(e => e.Worker)
                 .FirstOrDefaultAsync(e => e.EncomendaNumero == encomendaNumero);
 
-            // Fetch Worker
             Worker = await _context.Workers
                 .FirstOrDefaultAsync(w => w.WorkerNumber == workerNumber);
 
@@ -60,7 +56,6 @@ namespace EncomendasProject.Pages.Reader
                 return new JsonResult(new { success = false, message = "Encomenda or Worker not found." });
             }
 
-            // Update Encomenda status
             if (Encomenda.Status == EncomendasStatusEnum.NotTaken)
             {
                 Encomenda.Status = EncomendasStatusEnum.InPreparation;

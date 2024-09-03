@@ -2,7 +2,7 @@
 @model EncomendasProject.Pages.Reader.ReaderModel
 
 @using Encomendas.Models;
-@using System.Net.NetworkInformation
+@using System.Net.NetworkInformation;
 
 @{
     ViewData["Title"] = "Read QR Codes";
@@ -39,43 +39,14 @@
             document.getElementById('Readerh2').textContent = 'Scanning Encomenda QR Code...';
             codeReader.decodeFromInputVideoDevice(undefined, 'video')
                 .then(result => {
-                    if (!encomendaNumber) {
-                        encomendaNumber = result.text;
-                        document.getElementById('result').textContent = `Encomenda QR Code: ${encomendaNumber} (Now scanning Worker QR Code...)`;
-                        // Stop scanning for Encomenda QR Code
-                        codeReader.reset();
-                        // Update header text for worker scanning
-                        document.getElementById('Readerh2').textContent = 'Scan Worker QR Code';
-                        // Start scanning for Worker QR Code
-                        startWorkerScan();
-                    } else if (!workerNumber) {
-                        workerNumber = result.text;
-                        document.getElementById('result').textContent = `Worker QR Code: ${workerNumber}`;
-                        // Send the data to the server
-                        fetch('@Url.Page("Reader", "OnPost")', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/x-www-form-urlencoded',
-                                'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
-                            },
-                            body: new URLSearchParams({
-                                'QRCodeData': `${encomendaNumber}_${workerNumber}`
-                            })
-                        })
-                            .then(response => response.json()) // Assuming the server returns JSON
-                            .then(data => {
-                                console.log('Server response:', data); // Debugging line
-                                if (data.success) {
-                                    document.getElementById('details').style.display = 'block';
-                                    document.getElementById('detailsText').textContent = `Encomenda Number: ${encomendaNumber}, Worker Number: ${workerNumber}`;
-                                } else {
-                                    document.getElementById('statusMessage').innerHTML = data.message;
-                                }
-                            })
-                            .catch(err => console.error('Fetch error:', err));
-                        // Stop scanning for Worker QR Code
-                        codeReader.reset();
-                    }
+                    encomendaNumber = result.text;
+                    document.getElementById('result').textContent = `Encomenda QR Code: ${encomendaNumber} (Now scanning Worker QR Code...)`;
+                    // Stop scanning for Encomenda QR Code
+                    codeReader.reset();
+                    // Update header text for worker scanning
+                    document.getElementById('Readerh2').textContent = 'Scan Worker QR Code';
+                    // Start scanning for Worker QR Code
+                    startWorkerScan();
                 })
                 .catch(err => console.error('Scanning error:', err));
         };
@@ -88,8 +59,34 @@
                     document.getElementById('result').textContent = `Worker QR Code: ${workerNumber}`;
                     // Stop scanning for Worker QR Code
                     codeReader.reset();
+                    // Send the data to the server
+                    sendQRCodeData(encomendaNumber, workerNumber);
                 })
                 .catch(err => console.error('Worker scanning error:', err));
+        };
+
+        // Function to send QR Code data to the server
+        const sendQRCodeData = (encomendaNumber, workerNumber) => {
+            fetch('@Url.Page("Reader", "OnPost")', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                },
+                body: new URLSearchParams({
+                    'QRCodeData': `${encomendaNumber}_${workerNumber}`
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        document.getElementById('details').style.display = 'block';
+                        document.getElementById('detailsText').textContent = `Encomenda Number: ${encomendaNumber}, Worker Number: ${workerNumber}`;
+                    } else {
+                        document.getElementById('statusMessage').innerHTML = data.message;
+                    }
+                })
+                .catch(err => console.error('Fetch error:', err));
         };
 
         // Event listener for start scan button
