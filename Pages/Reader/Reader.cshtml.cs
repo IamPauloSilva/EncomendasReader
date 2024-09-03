@@ -81,5 +81,6 @@ namespace EncomendasProject.Pages.Reader
 
             return new JsonResult(new { success = true, message = Message });
         }
+
     }
 }
