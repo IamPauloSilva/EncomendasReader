@@ -64,16 +64,17 @@
                         })
                             .then(response => response.text())
                             .then(data => {
+                                console.log('Server response:', data); // Debugging line
                                 document.getElementById('details').style.display = 'block';
                                 document.getElementById('detailsText').textContent = `Encomenda Number: ${encomendaNumber}, Worker Number: ${workerNumber}`;
                                 document.getElementById('statusMessage').innerHTML = data;
                             })
-                            .catch(err => console.error(err));
+                            .catch(err => console.error('Fetch error:', err));
                         // Stop scanning for Worker QR Code
                         codeReader.reset();
                     }
                 })
-                .catch(err => console.error(err));
+                .catch(err => console.error('Scanning error:', err));
         };
 
         // Function to start scanning for Worker QR Code
@@ -85,7 +86,7 @@
                     // Stop scanning for Worker QR Code
                     codeReader.reset();
                 })
-                .catch(err => console.error(err));
+                .catch(err => console.error('Worker scanning error:', err));
         };
 
         // Event listener for start scan button

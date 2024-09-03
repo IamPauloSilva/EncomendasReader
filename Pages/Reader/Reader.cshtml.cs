@@ -27,6 +27,7 @@ namespace EncomendasProject.Pages.Reader
         {
             if (string.IsNullOrEmpty(QRCodeData))
             {
+                Message = "QR Code data is missing.";
                 return Page();
             }
 
@@ -34,6 +35,7 @@ namespace EncomendasProject.Pages.Reader
             var parts = QRCodeData.Split('_');
             if (parts.Length != 2)
             {
+                Message = "Invalid QR Code format.";
                 return Page(); // Invalid format
             }
 
@@ -43,6 +45,7 @@ namespace EncomendasProject.Pages.Reader
             // Convert workerNumberString to integer
             if (!int.TryParse(workerNumberString, out var workerNumber))
             {
+                Message = "Invalid worker number format.";
                 return Page(); // Invalid worker number format
             }
 
@@ -57,6 +60,7 @@ namespace EncomendasProject.Pages.Reader
 
             if (Encomenda == null || Worker == null)
             {
+                Message = "Encomenda or Worker not found.";
                 return Page(); // Encomenda or Worker not found
             }
 
