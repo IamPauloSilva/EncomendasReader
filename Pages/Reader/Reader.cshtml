@@ -44,7 +44,10 @@
                     codeReader.reset();
                     startWorkerScan(); // Call to scan worker QR code
                 })
-                .catch(err => console.error('Scanning error:', err));
+                .catch(err => {
+                    console.error('Scanning error:', err);
+                    document.getElementById('result').textContent = `Error scanning Encomenda QR Code: ${err}`;
+                });
         };
 
         // Function to start scanning for Worker QR Code
@@ -56,7 +59,10 @@
                     document.getElementById('result').textContent = `Worker QR Code: ${workerNumber}`;
                     sendQRCodeData(encomendaNumber, workerNumber); // Send data to server
                 })
-                .catch(err => console.error('Worker scanning error:', err));
+                .catch(err => {
+                    console.error('Worker scanning error:', err);
+                    document.getElementById('result').textContent = `Error scanning Worker QR Code: ${err}`;
+                });
         };
 
         // Function to send QR Code data to the server
@@ -86,7 +92,10 @@
                         document.getElementById('statusMessage').innerHTML = `<h2>${data.message}</h2>`;
                     }
                 })
-                .catch(err => console.error('Fetch error:', err));
+                .catch(err => {
+                    console.error('Fetch error:', err);
+                    document.getElementById('result').textContent = `Error sending data to server: ${err}`;
+                });
         };
 
         // Event listener for start scan button

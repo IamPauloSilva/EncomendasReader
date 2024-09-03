@@ -25,6 +25,8 @@ namespace EncomendasProject.Pages.Reader
 
         public async Task<IActionResult> OnPostAsync()
         {
+            Console.WriteLine("Received QRCodeData: " + QRCodeData); // Logging the received data
+
             if (string.IsNullOrEmpty(QRCodeData))
             {
                 return new JsonResult(new { success = false, message = "QR Code data is missing." });
@@ -72,6 +74,8 @@ namespace EncomendasProject.Pages.Reader
 
             _context.Encomendas.Update(Encomenda);
             await _context.SaveChangesAsync();
+
+            Console.WriteLine("Update successful, status: " + Encomenda.Status);
 
             return new JsonResult(new { success = true, message = Message });
         }
