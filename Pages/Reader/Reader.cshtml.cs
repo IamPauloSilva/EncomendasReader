@@ -4,6 +4,8 @@ using EncomendasProject.Data;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Threading.Tasks;
 
 namespace EncomendasProject.Pages.Reader
 {
