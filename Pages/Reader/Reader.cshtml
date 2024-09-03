@@ -10,7 +10,7 @@
 
 <h1>QR Code Scanner</h1>
 <div>
-    <h2>Scan Encomenda QR Code</h2>
+    <h2 id="Readerh2">Scan Encomenda QR Code</h2>
     <video id="video" width="300" height="300" style="border: 1px solid black;"></video>
     <button id="startScanButton">Start Scan</button>
     <p id="result">Waiting for scan...</p>
@@ -36,6 +36,7 @@
 
         // Function to start scanning process
         const startScanning = () => {
+            document.getElementById('Readerh2').textContent = 'Scanning Encomenda QR Code...';
             codeReader.decodeFromInputVideoDevice(undefined, 'video')
                 .then(result => {
                     if (!encomendaNumber) {
@@ -43,6 +44,8 @@
                         document.getElementById('result').textContent = `Encomenda QR Code: ${encomendaNumber} (Now scanning Worker QR Code...)`;
                         // Stop scanning for Encomenda QR Code
                         codeReader.reset();
+                        // Update header text for worker scanning
+                        document.getElementById('Readerh2').textContent = 'Scan Worker QR Code';
                         // Start scanning for Worker QR Code
                         startWorkerScan();
                     } else if (!workerNumber) {
