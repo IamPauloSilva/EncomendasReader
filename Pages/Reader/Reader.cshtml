@@ -28,6 +28,10 @@
     </div>
 }
 
+<form method="post">
+    @Html.AntiForgeryToken()
+</form>
+
 <script>
     window.addEventListener('load', () => {
         const codeReader = new ZXing.BrowserQRCodeReader();
@@ -40,13 +44,13 @@
             codeReader.decodeFromInputVideoDevice(undefined, 'video')
                 .then(result => {
                     encomendaNumber = result.text;
-                    document.getElementById('result').textContent = `Encomenda QR Code: ${encomendaNumber} (Now scanning Worker QR Code...)`;
+                    document.getElementById('result').textContent = Encomenda QR Code: ${encomendaNumber} (Now scanning Worker QR Code...);
                     codeReader.reset();
                     startWorkerScan(); // Call to scan worker QR code
                 })
                 .catch(err => {
                     console.error('Scanning error:', err);
-                    document.getElementById('result').textContent = `Error scanning Encomenda QR Code: ${err}`;
+                    document.getElementById('result').textContent = Error scanning Encomenda QR Code: ${err};
                 });
         };
 
@@ -56,26 +60,37 @@
             codeReader.decodeFromInputVideoDevice(undefined, 'video')
                 .then(result => {
                     workerNumber = result.text;
-                    document.getElementById('result').textContent = `Worker QR Code: ${workerNumber}`;
+                    document.getElementById('result').textContent = Worker QR Code: ${workerNumber};
                     sendQRCodeData(encomendaNumber, workerNumber); // Send data to server
                 })
                 .catch(err => {
                     console.error('Worker scanning error:', err);
-                    document.getElementById('result').textContent = `Error scanning Worker QR Code: ${err}`;
+                    document.getElementById('result').textContent = Error scanning Worker QR Code: ${err};
                 });
         };
 
         // Function to send QR Code data to the server
         const sendQRCodeData = (encomendaNumber, workerNumber) => {
+            // Retrieve the CSRF token
+            const csrfTokenElement = document.querySelector('input[name="__RequestVerificationToken"]');
+            if (!csrfTokenElement) {
+                console.error('CSRF token not found. Ensure @Html.AntiForgeryToken() is present in your form.');
+                document.getElementById('result').textContent = 'Error: CSRF token not found. Please contact support.';
+                return;
+            }
+
+            const csrfToken = csrfTokenElement.value;
+            console.log('CSRF Token:', csrfToken);
+
             console.log("Sending data to server: ", encomendaNumber, workerNumber);
             fetch('@Url.Page("Reader", "OnPost")', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
-                    'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                    'RequestVerificationToken': csrfToken
                 },
                 body: new URLSearchParams({
-                    'QRCodeData': `${encomendaNumber}_${workerNumber}`
+                    'QRCodeData': ${encomendaNumber}_${workerNumber}
                 })
             })
                 .then(response => {
@@ -86,15 +101,15 @@
                     console.log("Server response: ", data);
                     if (data.success) {
                         document.getElementById('details').style.display = 'block';
-                        document.getElementById('detailsText').textContent = `Encomenda Number: ${encomendaNumber}, Worker Number: ${workerNumber}`;
-                        document.getElementById('statusMessage').innerHTML = `<h2>${data.message}</h2>`;
+                        document.getElementById('detailsText').textContent = Encomenda Number: ${encomendaNumber}, Worker Number: ${workerNumber};
+                        document.getElementById('statusMessage').innerHTML = <h2>${data.message}</h2>;
                     } else {
-                        document.getElementById('statusMessage').innerHTML = `<h2>${data.message}</h2>`;
+                        document.getElementById('statusMessage').innerHTML = <h2>${data.message}</h2>;
                     }
                 })
                 .catch(err => {
                     console.error('Fetch error:', err);
-                    document.getElementById('result').textContent = `Error sending data to server: ${err}`;
+                    document.getElementById('result').textContent = Error sending data to server: ${err};
                 });
         };
 
