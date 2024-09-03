@@ -27,16 +27,14 @@ namespace EncomendasProject.Pages.Reader
         {
             if (string.IsNullOrEmpty(QRCodeData))
             {
-                Message = "QR Code data is missing.";
-                return Page();
+                return new JsonResult(new { success = false, message = "QR Code data is missing." });
             }
 
             // Assume QR code data has the format "EncomendaNumber_WorkerNumber"
             var parts = QRCodeData.Split('_');
             if (parts.Length != 2)
             {
-                Message = "Invalid QR Code format.";
-                return Page(); // Invalid format
+                return new JsonResult(new { success = false, message = "Invalid QR Code format." });
             }
 
             var encomendaNumero = parts[0];
@@ -45,8 +43,7 @@ namespace EncomendasProject.Pages.Reader
             // Convert workerNumberString to integer
             if (!int.TryParse(workerNumberString, out var workerNumber))
             {
-                Message = "Invalid worker number format.";
-                return Page(); // Invalid worker number format
+                return new JsonResult(new { success = false, message = "Invalid worker number format." });
             }
 
             // Fetch Encomenda
@@ -60,15 +57,14 @@ namespace EncomendasProject.Pages.Reader
 
             if (Encomenda == null || Worker == null)
             {
-                Message = "Encomenda or Worker not found.";
-                return Page(); // Encomenda or Worker not found
+                return new JsonResult(new { success = false, message = "Encomenda or Worker not found." });
             }
 
             // Update Encomenda status
             if (Encomenda.Status == EncomendasStatusEnum.NotTaken)
             {
                 Encomenda.Status = EncomendasStatusEnum.InPreparation;
-                Encomenda.Worker = Worker;
+                Encomenda.WorkerID = Worker.WorkerNumber;
                 Encomenda.DataInicioPreparacao = DateTime.Now;
                 Message = "Encomenda Iniciada com sucesso";
             }
@@ -82,7 +78,7 @@ namespace EncomendasProject.Pages.Reader
             _context.Encomendas.Update(Encomenda);
             await _context.SaveChangesAsync();
 
-            return Page();
+            return new JsonResult(new { success = true, message = Message });
         }
     }
 }

@@ -62,12 +62,15 @@
                                 'QRCodeData': `${encomendaNumber}_${workerNumber}`
                             })
                         })
-                            .then(response => response.text())
+                            .then(response => response.json()) // Assuming the server returns JSON
                             .then(data => {
                                 console.log('Server response:', data); // Debugging line
-                                document.getElementById('details').style.display = 'block';
-                                document.getElementById('detailsText').textContent = `Encomenda Number: ${encomendaNumber}, Worker Number: ${workerNumber}`;
-                                document.getElementById('statusMessage').innerHTML = data;
+                                if (data.success) {
+                                    document.getElementById('details').style.display = 'block';
+                                    document.getElementById('detailsText').textContent = `Encomenda Number: ${encomendaNumber}, Worker Number: ${workerNumber}`;
+                                } else {
+                                    document.getElementById('statusMessage').innerHTML = data.message;
+                                }
                             })
                             .catch(err => console.error('Fetch error:', err));
                         // Stop scanning for Worker QR Code
