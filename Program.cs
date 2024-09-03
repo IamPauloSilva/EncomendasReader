@@ -4,6 +4,7 @@ using EncomendasProject.Data;
 using System.Text.Json.Serialization;
 using System;
 using System.Collections;
+using Microsoft.AspNetCore.DataProtection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,6 +32,10 @@ builder.Services.AddRazorPages()
         options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
         options.JsonSerializerOptions.MaxDepth = 64; 
     });
+// Adicione isso ao seu `Program.cs`
+builder.Services.AddDataProtection()
+    .PersistKeysToFileSystem(new DirectoryInfo(@".\keys"))  // Diretório onde as chaves serão armazenadas
+    .SetApplicationName("EncomendasProject");
 
 var app = builder.Build();
 

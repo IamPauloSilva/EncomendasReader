@@ -71,27 +71,15 @@
 
         // Function to send QR Code data to the server
         const sendQRCodeData = (encomendaNumber, workerNumber) => {
-            // Retrieve the CSRF token
-            const csrfTokenElement = document.querySelector('input[name="__RequestVerificationToken"]');
-            if (!csrfTokenElement) {
-                console.error('CSRF token not found. Ensure @Html.AntiForgeryToken() is present in your form.');
-                document.getElementById('result').textContent = 'Error: CSRF token not found. Please contact support.';
-                return;
-            }
-
-            const csrfToken = csrfTokenElement.value;
-
             fetch('@Url.Page("Reader", "OnPost")', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'RequestVerificationToken': csrfToken
+                    'Content-Type': 'application/x-www-form-urlencoded'
                 },
                 body: new URLSearchParams({
-                    'QRCodeData': ${ encomendaNumber }_${ workerNumber }
-                    })
-        })
-
+                    'QRCodeData': `${encomendaNumber}_${workerNumber}`
+                })
+            })
                 .then(response => {
                     if (!response.ok) {
                         console.error('HTTP error:', response.status, response.statusText);
