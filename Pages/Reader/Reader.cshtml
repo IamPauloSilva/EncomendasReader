@@ -81,7 +81,7 @@
 
             const csrfToken = csrfTokenElement.value;
 
-            fetch('@Url.Page("/Reader/Reader", "OnPost")', {
+            fetch('@Url.Page("/Reader/Reader")', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
@@ -111,6 +111,7 @@
                     console.error('Fetch error:', err);
                     document.getElementById('result').textContent = `Error sending data to server: ${err.message}`;
                 });
+
 
         };
 
