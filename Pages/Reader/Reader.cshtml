@@ -1,0 +1,110 @@
+﻿@page
+@model EncomendasProject.Pages.Reader.ReaderModel
+
+@using Encomendas.Models;
+@using System.Net.NetworkInformation
+
+@{
+    ViewData["Title"] = "Read QR Codes";
+}
+
+<h1>QR Code Scanner</h1>
+<div>
+    <h2>Scan Encomenda QR Code</h2>
+    <video id="video" width="300" height="300" style="border: 1px solid black;"></video>
+    <button id="startScanButton">Start Scan</button>
+    <p id="result">Waiting for scan...</p>
+</div>
+
+<div id="details" style="display:none;">
+    <h2>Details</h2>
+    <p id="detailsText">Encomenda Number and Worker Number will be displayed here after scanning.</p>
+</div>
+
+@if (Model.Message != null)
+{
+    <div id="statusMessage">
+        <h2>@Model.Message</h2>
+    </div>
+}
+
+<script>
+    window.addEventListener('load', () => {
+        const codeReader = new ZXing.BrowserQRCodeReader();
+        let encomendaNumber = '';
+        let workerNumber = '';
+
+        // Function to start scanning process
+        const startScanning = () => {
+            codeReader.decodeFromInputVideoDevice(undefined, 'video')
+                .then(result => {
+                    if (!encomendaNumber) {
+                        encomendaNumber = result.text;
+                        document.getElementById('result').textContent = `Encomenda QR Code: ${encomendaNumber}`;
+                        document.getElementById('result').textContent = `Encomenda QR Code: ${encomendaNumber} (Now scanning Worker QR Code...)`;
+                        // Stop scanning for Encomenda QR Code
+                        codeReader.reset();
+                        // Start scanning for Worker QR Code
+                        startWorkerScan();
+                    } else if (!workerNumber) {
+                        workerNumber = result.text;
+                        document.getElementById('result').textContent = `Worker QR Code: ${workerNumber}`;
+                        // Send the data to the server
+                        fetch('@Url.Page("Reader", "OnPost")', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/x-www-form-urlencoded',
+                                'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                            },
+                            body: new URLSearchParams({
+                                'QRCodeData': `${encomendaNumber}_${workerNumber}`
+                            })
+                        })
+                            .then(response => response.text())
+                            .then(data => {
+                                document.getElementById('details').style.display = 'block';
+                                document.getElementById('detailsText').textContent = `Encomenda Number: ${encomendaNumber}, Worker Number: ${workerNumber}`;
+                                document.getElementById('statusMessage').innerHTML = data;
+                            })
+                            .catch(err => console.error(err));
+                        // Stop scanning for Worker QR Code
+                        codeReader.reset();
+                    }
+                })
+                .catch(err => console.error(err));
+        };
+
+        // Function to start scanning for Worker QR Code
+        const startWorkerScan = () => {
+            codeReader.decodeFromInputVideoDevice(undefined, 'video')
+                .then(result => {
+                    workerNumber = result.text;
+                    document.getElementById('result').textContent = `Worker QR Code: ${workerNumber}`;
+                    // Send the data to the server
+                    fetch('@Url.Page("Reader", "OnPost")', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                        },
+                        body: new URLSearchParams({
+                            'QRCodeData': `${encomendaNumber}_${workerNumber}`
+                        })
+                    })
+                        .then(response => response.text())
+                        .then(data => {
+                            document.getElementById('details').style.display = 'block';
+                            document.getElementById('detailsText').textContent = `Encomenda Number: ${encomendaNumber}, Worker Number: ${workerNumber}`;
+                            document.getElementById('statusMessage').innerHTML = data;
+                        })
+                        .catch(err => console.error(err));
+                    // Stop scanning for Worker QR Code
+                    codeReader.reset();
+                })
+                .catch(err => console.error(err));
+        };
+
+        // Event listener for start scan button
+        document.getElementById('startScanButton').addEventListener('click', startScanning);
+    });
+</script>

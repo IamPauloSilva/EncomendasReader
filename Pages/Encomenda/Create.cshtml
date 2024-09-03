@@ -1,0 +1,142 @@
+﻿@page
+@model EncomendasProject.Pages.Encomenda.CreateModel
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create Encomenda</h1>
+
+<form id="create-encomenda-form" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="form-group">
+        <label asp-for="EncomendaModel.EncomendaNumero" class="control-label"></label>
+        <input asp-for="EncomendaModel.EncomendaNumero" class="form-control" />
+        <span asp-validation-for="EncomendaModel.EncomendaNumero" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="EncomendaModel.ClientId" class="control-label"></label>
+        <select asp-for="EncomendaModel.ClientId" class="form-control" asp-items="@(ViewData["ClientList"] as SelectList)"></select>
+        <span asp-validation-for="EncomendaModel.ClientId" class="text-danger"></span>
+    </div>
+
+    <h4>Produtos</h4>
+    <div id="product-selection">
+        <label for="SelectedProductId">Selecione o Produto</label>
+        <select id="SelectedProductId" class="form-control">
+            @if (ViewData["ProductsList"] != null)
+            {
+                var productsList = ViewData["ProductsList"] as IEnumerable<SelectListItem>;
+                foreach (var product in productsList)
+                {
+                    <option value="@product.Value">@product.Text</option>
+                }
+            }
+        </select>
+
+        <label for="SelectedQuantity">Quantidade</label>
+        <input id="SelectedQuantity" class="form-control" type="number" min="1" />
+
+        <button type="button" id="add-product-btn" class="btn btn-primary mt-2">Adicionar Produto</button>
+    </div>
+
+    <div id="added-products" class="mt-4">
+        <h4>Produtos Adicionados</h4>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Produto</th>
+                    <th>Quantidade</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody id="products-table-body">
+                <!-- Produtos adicionados via JavaScript -->
+            </tbody>
+        </table>
+    </div>
+
+    <input type="hidden" name="EncomendaProductsJson" id="EncomendaProductsJson" />
+
+    <button type="submit" class="btn btn-success mt-3">Criar Encomenda</button>
+</form>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const addProductBtn = document.getElementById('add-product-btn');
+            const productsTableBody = document.getElementById('products-table-body');
+            const selectedProductId = document.getElementById('SelectedProductId');
+            const selectedQuantity = document.getElementById('SelectedQuantity');
+            const productsDataField = document.getElementById('EncomendaProductsJson');
+
+            let productsList = [];
+
+            addProductBtn.addEventListener('click', function () {
+                const productId = selectedProductId.value;
+                const quantity = selectedQuantity.value;
+                const productText = selectedProductId.options[selectedProductId.selectedIndex]?.text || '';
+
+                // Debug info for selected product and quantity
+                console.log(`Selected ProductId: ${productId}`);
+                console.log(`Selected Quantity: ${quantity}`);
+                console.log(`Selected Product Name: ${productText}`);
+
+                if (productId && quantity > 0) {
+                    const productExists = productsList.some(p => p.productId === parseInt(productId));
+
+                    if (!productExists) {
+                        productsList.push({
+                            productId: parseInt(productId),
+                            quantity: parseInt(quantity)
+                        });
+
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                                    <td>${productText}</td>
+                                    <td>${quantity}</td>
+                                    <td><button type="button" class="btn btn-danger btn-sm remove-product-btn">Remove</button></td>
+                                `;
+
+                        productsTableBody.appendChild(row);
+
+                        // Clear input fields after adding product
+                        selectedProductId.value = '';
+                        selectedQuantity.value = '';
+
+                        // Update hidden field with products list
+                        productsDataField.value = JSON.stringify(productsList);
+
+                        // Debug info for products list
+                        console.log('Products List After Addition:', productsList);
+                        console.log('EncomendaProductsJson Value:', productsDataField.value);
+
+                        // Add event listener to the remove button
+                        row.querySelector('.remove-product-btn').addEventListener('click', function () {
+                            row.remove();
+                            productsList = productsList.filter(p => p.productId !== parseInt(productId));
+                            productsDataField.value = JSON.stringify(productsList);
+                            // Debug info for products list after removal
+                            console.log('Products List After Removal:', productsList);
+                            console.log('EncomendaProductsJson Value After Removal:', productsDataField.value);
+                        });
+                    } else {
+                        alert('Product already added.');
+                    }
+                } else {
+                    alert('Please select a product and enter a valid quantity.');
+                }
+            });
+        });
+        document.addEventListener("DOMContentLoaded", function () {
+            const form = document.getElementById('create-encomenda-form');
+
+            form.addEventListener('submit', function (event) {
+                console.log('Form submission data:');
+                console.log('EncomendaProductsJson Value:', document.getElementById('EncomendaProductsJson').value);
+            });
+        });
+    </script>
+}

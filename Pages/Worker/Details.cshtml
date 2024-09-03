@@ -1,0 +1,125 @@
+﻿@page
+@model EncomendasProject.Pages.Worker.DetailsModel
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>WorkerModel</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.WorkerModel.Name)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.WorkerModel.Name)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.WorkerModel.WorkerNumber)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.WorkerModel.WorkerNumber)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.WorkerModel.Shift)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.WorkerModel.Shift)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.WorkerModel.Job)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.WorkerModel.Job)
+        </dd>
+    </dl>
+</div>
+
+<div>
+    <h4>QR Code for Worker Number</h4>
+    <img id="qrCodeImage" src="/Worker/Details?handler=GenerateQRCode&workerNumber=@Model.WorkerModel.WorkerNumber" alt="QR Code" />
+</div>
+
+<div>
+    <a asp-page="./Edit" asp-route-id="@Model.WorkerModel.Id">Edit</a> |
+    <a asp-page="./Index">Back to List</a>
+</div>
+
+<div>
+    <button id="printButton" onclick="printWorkerDetails()">Print Details</button>
+</div>
+
+<!-- Printable area -->
+<div id="printableArea" class="printable-content">
+    <h1>Worker Details</h1>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            Name
+        </dt>
+        <dd class="col-sm-10">
+            @Model.WorkerModel.Name
+        </dd>
+        <dt class="col-sm-2">
+            Worker Number
+        </dt>
+        <dd class="col-sm-10">
+            @Model.WorkerModel.WorkerNumber
+        </dd>
+        <dt class="col-sm-2">
+            Shift
+        </dt>
+        <dd class="col-sm-10">
+            @Model.WorkerModel.Shift
+        </dd>
+        <dt class="col-sm-2">
+            Job
+        </dt>
+        <dd class="col-sm-10">
+            @Model.WorkerModel.Job
+        </dd>
+    </dl>
+
+    <h4>QR Code</h4>
+    <img src="/Worker/Details?handler=GenerateQRCode&workerNumber=@Model.WorkerModel.WorkerNumber" alt="QR Code" />
+</div>
+
+<script>
+    function printWorkerDetails() {
+        var printContents = document.getElementById('printableArea').innerHTML;
+        var originalContents = document.body.innerHTML;
+        document.body.innerHTML = printContents;
+        window.print();
+        document.body.innerHTML = originalContents;
+    }
+</script>
+<style>
+    /* Hide the printable area on screen */
+    .printable-content {
+        display: none;
+    }
+
+    /* Show the printable area during print */
+    @@media print {
+        .printable-content {
+            display: block;
+        }
+        
+        /* Hide everything else except the printable area */
+        body * {
+            visibility: hidden;
+        }
+        .printable-content, .printable-content * {
+            visibility: visible;
+        }
+        .printable-content {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+        }
+    }
+</style>

@@ -1,0 +1,92 @@
+﻿@page "{id:int}"
+@model EncomendasProject.Pages.Encomenda.EditModel
+@using Newtonsoft.Json
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit Encomenda</h1>
+
+<form id="edit-encomenda-form" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="form-group">
+        <label asp-for="EncomendaModel.EncomendaNumero" class="control-label"></label>
+        <input asp-for="EncomendaModel.EncomendaNumero" class="form-control" />
+        <span asp-validation-for="EncomendaModel.EncomendaNumero" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="EncomendaModel.ClientId" class="control-label"></label>
+        <select asp-for="EncomendaModel.ClientId" class="form-control" asp-items="@(ViewData["ClientList"] as SelectList)"></select>
+        <span asp-validation-for="EncomendaModel.ClientId" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="EncomendaModel.WorkerID" class="control-label"></label>
+        <select asp-for="EncomendaModel.WorkerID" class="form-control" asp-items="@(ViewData["WorkerList"] as SelectList)"></select>
+        <span asp-validation-for="EncomendaModel.WorkerID" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="EncomendaModel.Status" class="control-label"></label>
+        <select asp-for="EncomendaModel.Status" class="form-control" asp-items="@(ViewData["StatusList"] as SelectList)"></select>
+        <span asp-validation-for="EncomendaModel.Status" class="text-danger"></span>
+    </div>
+
+    <h4>Produtos</h4>
+    <div id="product-selection">
+        <label for="SelectedProductId">Selecione o Produto</label>
+        <select id="SelectedProductId" class="form-control">
+            @if (ViewData["ProductsList"] != null)
+            {
+                var productsList = ViewData["ProductsList"] as IEnumerable<SelectListItem>;
+                foreach (var product in productsList)
+                {
+                    <option value="@product.Value">@product.Text</option>
+                }
+            }
+        </select>
+
+        <label for="SelectedQuantity">Quantidade</label>
+        <input id="SelectedQuantity" class="form-control" type="number" min="1" />
+
+        <button type="button" id="add-product-btn" class="btn btn-primary mt-2">Adicionar Produto</button>
+    </div>
+
+    <div id="added-products" class="mt-4">
+        <h4>Produtos Adicionados</h4>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Produto</th>
+                    <th>Quantidade</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody id="products-table-body">
+                @if (Model.EncomendaModel.EncomendaProducts != null)
+                {
+                    @foreach (var item in Model.EncomendaModel.EncomendaProducts)
+                    {
+                        <tr data-product-id="@item.ProductId">
+                            <td>@item.Product?.Name</td>
+                            <td>@item.Quantity</td>
+                            <td><button type="button" class="btn btn-danger btn-sm remove-product-btn" data-product-id="@item.ProductId">Remove</button></td>
+                        </tr>
+                    }
+                }
+            </tbody>
+
+
+
+        </table>
+    </div>
+
+    <input type="hidden" name="EncomendaProductsJson" id="EncomendaProductsJson" />
+
+    <button type="submit" class="btn btn-success mt-3">Save Changes</button>
+</form>
+
+
