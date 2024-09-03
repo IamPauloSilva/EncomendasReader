@@ -40,7 +40,6 @@
                 .then(result => {
                     if (!encomendaNumber) {
                         encomendaNumber = result.text;
-                        document.getElementById('result').textContent = `Encomenda QR Code: ${encomendaNumber}`;
                         document.getElementById('result').textContent = `Encomenda QR Code: ${encomendaNumber} (Now scanning Worker QR Code...)`;
                         // Stop scanning for Encomenda QR Code
                         codeReader.reset();
