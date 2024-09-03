@@ -60,6 +60,7 @@ namespace EncomendasProject.Pages.Reader
                 return Page(); // Encomenda or Worker not found
             }
 
+            // Update Encomenda status
             if (Encomenda.Status == EncomendasStatusEnum.NotTaken)
             {
                 Encomenda.Status = EncomendasStatusEnum.InPreparation;
