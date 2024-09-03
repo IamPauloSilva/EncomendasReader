@@ -40,7 +40,8 @@
 
 <div>
     <h4>QR Code for Worker Number</h4>
-    <img id="qrCodeImage" src="/Worker/Details?handler=GenerateQRCode&workerNumber=@Model.WorkerModel.WorkerNumber" alt="QR Code" />
+    <img id="qrCodeImage" src="@Url.Page("/Worker/Details", "GenerateQRCode", new { workerNumber = Model.WorkerModel.WorkerNumber })" alt="QR Code" />
+
 </div>
 
 <div>
@@ -84,7 +85,8 @@
     </dl>
 
     <h4>QR Code</h4>
-    <img src="/Worker/Details?handler=GenerateQRCode&workerNumber=@Model.WorkerModel.WorkerNumber" alt="QR Code" />
+    <img id="qrCodeImage" src="@Url.Page("/Worker/Details", "GenerateQRCode", new { workerNumber = Model.WorkerModel.WorkerNumber })" alt="QR Code" />
+
 </div>
 
 <script>
