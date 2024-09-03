@@ -53,18 +53,24 @@ namespace EncomendasProject.Pages.Reader
                 .Include(e => e.Worker)
                 .FirstOrDefaultAsync(e => e.EncomendaNumero == encomendaNumero);
 
+            // Encontre o Worker pelo WorkerNumber
             Worker = await _context.Workers
                 .FirstOrDefaultAsync(w => w.WorkerNumber == workerNumber);
 
-            if (Encomenda == null || Worker == null)
+            if (Encomenda == null)
             {
-                return new JsonResult(new { success = false, message = "Encomenda or Worker not found." });
+                return new JsonResult(new { success = false, message = "Encomenda not found." });
+            }
+
+            if (Worker == null)
+            {
+                return new JsonResult(new { success = false, message = "Worker not found." });
             }
 
             if (Encomenda.Status == EncomendasStatusEnum.NotTaken)
             {
                 Encomenda.Status = EncomendasStatusEnum.InPreparation;
-                Encomenda.WorkerID = Worker.WorkerNumber;
+                Encomenda.WorkerID = Worker.Id; // Defina o WorkerID com a ID do Worker encontrado
                 Encomenda.DataInicioPreparacao = DateTime.Now;
                 Message = "Encomenda Iniciada com sucesso";
             }

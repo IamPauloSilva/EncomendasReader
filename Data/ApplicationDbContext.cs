@@ -36,17 +36,20 @@ namespace EncomendasProject.Data
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<EncomendaProduct>()
-            .HasKey(ep => new { ep.EncomendaId, ep.ProductId });
+                .HasKey(ep => new { ep.EncomendaId, ep.ProductId });
 
-            modelBuilder.Entity<EncomendaProduct>()
-                .HasOne(ep => ep.Encomenda)
-                .WithMany(e => e.EncomendaProducts)
-                .HasForeignKey(ep => ep.EncomendaId);
+            // Configuração do relacionamento entre Encomenda e Worker
+            modelBuilder.Entity<EncomendaModel>()
+                .HasOne(e => e.Worker)
+                .WithMany(w => w.Encomendas)
+                .HasForeignKey(e => e.WorkerID)
+                .OnDelete(DeleteBehavior.Restrict); // Definir a ação desejada em caso de exclusão
 
-            modelBuilder.Entity<EncomendaProduct>()
-                .HasOne(ep => ep.Product)
-                .WithMany()
-                .HasForeignKey(ep => ep.ProductId);
+            // Configuração adicional se necessário
+            // Exemplo: Garantir que WorkerNumber seja único
+            modelBuilder.Entity<WorkerModel>()
+                .HasIndex(w => w.WorkerNumber)
+                .IsUnique();
         }
     }
 
