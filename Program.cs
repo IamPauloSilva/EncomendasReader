@@ -34,7 +34,7 @@ builder.Services.AddRazorPages()
     });
 // Adicione isso ao seu `Program.cs`
 builder.Services.AddDataProtection()
-    .PersistKeysToFileSystem(new DirectoryInfo(@".\keys"))  // Diretório onde as chaves serão armazenadas
+    .PersistKeysToFileSystem(new DirectoryInfo(@"/wwwroot/keys"))  // Diretório onde as chaves serão armazenadas
     .SetApplicationName("EncomendasProject");
 
 var app = builder.Build();
