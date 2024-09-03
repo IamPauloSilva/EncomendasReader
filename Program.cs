@@ -2,17 +2,18 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using EncomendasProject.Data;
 using System.Text.Json.Serialization;
+using System;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // Register DbContext with MySQL
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
-    ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+var mySqlConnection = builder.Configuration.GetConnectionString("SQL_CONNECTION_STRING");
 
-var serverVersion = new MySqlServerVersion(new Version(8, 0, 38));
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseMySql(connectionString, serverVersion));
+                  options.UseMySql(mySqlConnection,
+                    ServerVersion.AutoDetect(mySqlConnection)));
+
 
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
@@ -26,6 +27,13 @@ builder.Services.AddRazorPages()
         options.JsonSerializerOptions.MaxDepth = 64; 
     });
 var app = builder.Build();
+
+// Apply migrations and create the database if not exists
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    dbContext.Database.Migrate();
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
