@@ -81,16 +81,17 @@
 
             const csrfToken = csrfTokenElement.value;
 
-            fetch('@Url.Page("./Reader")', {
+            fetch('@Url.Page("Reader", "OnPost")', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/x-www-form-urlencoded',
                     'RequestVerificationToken': csrfToken
                 },
                 body: new URLSearchParams({
-                    'QRCodeData': `${encomendaNumber}_${workerNumber}`
-                })
-            })
+                    'QRCodeData': ${ encomendaNumber }_${ workerNumber }
+                    })
+        })
+
                 .then(response => {
                     if (!response.ok) {
                         console.error('HTTP error:', response.status, response.statusText);
