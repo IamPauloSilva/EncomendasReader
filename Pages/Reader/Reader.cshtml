@@ -41,32 +41,27 @@
                 .then(result => {
                     encomendaNumber = result.text;
                     document.getElementById('result').textContent = `Encomenda QR Code: ${encomendaNumber} (Now scanning Worker QR Code...)`;
-                    // Stop scanning for Encomenda QR Code
                     codeReader.reset();
-                    // Update header text for worker scanning
-                    document.getElementById('Readerh2').textContent = 'Scan Worker QR Code';
-                    // Start scanning for Worker QR Code
-                    startWorkerScan();
+                    startWorkerScan(); // Call to scan worker QR code
                 })
                 .catch(err => console.error('Scanning error:', err));
         };
 
         // Function to start scanning for Worker QR Code
         const startWorkerScan = () => {
+            document.getElementById('Readerh2').textContent = 'Scan Worker QR Code';
             codeReader.decodeFromInputVideoDevice(undefined, 'video')
                 .then(result => {
                     workerNumber = result.text;
                     document.getElementById('result').textContent = `Worker QR Code: ${workerNumber}`;
-                    // Stop scanning for Worker QR Code
-                    codeReader.reset();
-                    // Send the data to the server
-                    sendQRCodeData(encomendaNumber, workerNumber);
+                    sendQRCodeData(encomendaNumber, workerNumber); // Send data to server
                 })
                 .catch(err => console.error('Worker scanning error:', err));
         };
 
         // Function to send QR Code data to the server
         const sendQRCodeData = (encomendaNumber, workerNumber) => {
+            console.log("Sending data to server: ", encomendaNumber, workerNumber);
             fetch('@Url.Page("Reader", "OnPost")', {
                 method: 'POST',
                 headers: {
@@ -77,13 +72,18 @@
                     'QRCodeData': `${encomendaNumber}_${workerNumber}`
                 })
             })
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) throw new Error('Network response was not ok.');
+                    return response.json();
+                })
                 .then(data => {
+                    console.log("Server response: ", data);
                     if (data.success) {
                         document.getElementById('details').style.display = 'block';
                         document.getElementById('detailsText').textContent = `Encomenda Number: ${encomendaNumber}, Worker Number: ${workerNumber}`;
+                        document.getElementById('statusMessage').innerHTML = `<h2>${data.message}</h2>`;
                     } else {
-                        document.getElementById('statusMessage').innerHTML = data.message;
+                        document.getElementById('statusMessage').innerHTML = `<h2>${data.message}</h2>`;
                     }
                 })
                 .catch(err => console.error('Fetch error:', err));
