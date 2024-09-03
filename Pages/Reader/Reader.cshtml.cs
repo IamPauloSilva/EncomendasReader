@@ -29,7 +29,7 @@ namespace EncomendasProject.Pages.Reader
             {
                 return new JsonResult(new { success = false, message = "QR Code data is missing." });
             }
-
+            Console.WriteLine(QRCodeData + "recebemos");
             // Assume QR code data has the format "EncomendaNumber_WorkerNumber"
             var parts = QRCodeData.Split('_');
             if (parts.Length != 2)
