@@ -12,7 +12,7 @@
 <div>
     <h2 id="Readerh2">Scan Encomenda QR Code</h2>
     <video id="video" width="300" height="300" style="border: 1px solid black;"></video>
-    <button id="startScanButton">Start Scan</button>
+    <button id="startScanButton" class="btn btn-primary btn-lg">Start Scan</button>
     <p id="result">Waiting for scan...</p>
 </div>
 
@@ -39,7 +39,7 @@
         // Function to start scanning process
         const startScanning = async () => {
             Swal.fire({
-                title: 'Scanning Encomenda QR Code...',
+                title: 'Leia Encomenda QR Code...',
                 text: 'Please wait.',
                 icon: 'info',
                 showConfirmButton: false,
@@ -67,7 +67,7 @@
         const startWorkerScan = async () => {
             Swal.fire({
                 title: 'Scan Worker QR Code',
-                text: 'Please scan the worker QR code.',
+                text: 'Por favor leia o QR do Colaborador!',
                 icon: 'info',
                 showConfirmButton: false,
                 timer: 2000
@@ -113,7 +113,7 @@
                     // Exibe a mensagem de sucesso incluindo o status da encomenda
                     Swal.fire({
                         title: 'Success',
-                        text: `Encomenda Number: ${encomendaNumber}, Worker Number: ${workerNumber}. Status: ${data.status}. ${data.message}`,
+                        text: `Encomenda Numero: ${encomendaNumber}, ${data.message}`,
                         icon: 'success',
                         confirmButtonText: 'OK'
                     }).then(() => {

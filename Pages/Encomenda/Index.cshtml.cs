@@ -24,7 +24,9 @@ namespace EncomendasProject.Pages.Encomenda
         public async Task OnGetAsync()
         {
             EncomendaModel = await _context.Encomendas
-                .Include(e => e.Client).ToListAsync();
+                .Include(e => e.Client)
+                .Include(e => e.Worker) // Inclua o trabalhador na consulta
+                .ToListAsync();
         }
     }
 }

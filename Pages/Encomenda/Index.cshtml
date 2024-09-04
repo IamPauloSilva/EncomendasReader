@@ -8,48 +8,57 @@
 <h1>Index</h1>
 
 <p>
-    <a asp-page="/Encomenda/Create">Create New</a>
-
+    <a asp-page="/Encomenda/Create" class="btn btn-primary">Create New</a>
 </p>
-<table class="table">
+
+<table class="table table-striped">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.EncomendaModel[0].EncomendaNumero)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.EncomendaModel[0].Client)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.EncomendaModel[0].WorkerID)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.EncomendaModel[0].Status)
-            </th>
+            <th>@Html.DisplayNameFor(model => model.EncomendaModel[0].EncomendaNumero)</th>
+            <th>@Html.DisplayNameFor(model => model.EncomendaModel[0].Client)</th>
+            <th>@Html.DisplayNameFor(model => model.EncomendaModel[0].Worker)</th>
+            <th>@Html.DisplayNameFor(model => model.EncomendaModel[0].DataCriacao)</th>
+            <th>@Html.DisplayNameFor(model => model.EncomendaModel[0].DataInicioPreparacao)</th>
+            <th>@Html.DisplayNameFor(model => model.EncomendaModel[0].DataFimPreparacao)</th>
+            <th>@Html.DisplayNameFor(model => model.EncomendaModel[0].Status)</th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model.EncomendaModel) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.EncomendaNumero)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Client.Id)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.WorkerID)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Status)
-            </td>
-            <td>
-                <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-page="./Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model.EncomendaModel)
+        {
+            <tr>
+                <td>@item.EncomendaNumero</td>
+                <td>@item.Client.Id</td>
+                <td>@item.Worker.Name</td> <!-- Ajuste conforme a propriedade do Worker -->
+                <td>@item.DataCriacao.ToShortDateString()</td>
+                <td>
+                    @if (item.DataInicioPreparacao != null)
+                    {
+                        @item.DataInicioPreparacao.ToShortDateString()
+                    }
+                    else
+                    {
+                        <span>N/A</span>
+                    }
+                </td>
+                <td>
+                    @if (item.DataFimPreparacao != null)
+                    {
+                        @item.DataFimPreparacao.ToShortDateString()
+                    }
+                    else
+                    {
+                        <span>N/A</span>
+                    }
+                </td>
+                <td>@item.Status</td>
+                <td>
+                    <a asp-page="./Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm">Edit</a> |
+                    <a asp-page="./Details" asp-route-id="@item.Id" class="btn btn-info btn-sm">Details</a> |
+                    <a asp-page="./Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm">Delete</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
