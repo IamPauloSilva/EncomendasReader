@@ -38,35 +38,49 @@
 
         // Function to start scanning process
         async function startScanning() {
-            document.getElementById('Readerh2').textContent = 'Scanning Encomenda QR Code...';
+            const readerHeader = document.getElementById('Readerh2');
+            const resultElement = document.getElementById('result');
+            if (!readerHeader || !resultElement) return;
+
+            readerHeader.textContent = 'Scanning Encomenda QR Code...';
             try {
                 const result = await codeReader.decodeFromInputVideoDevice(undefined, 'video');
                 encomendaNumber = result.text;
-                document.getElementById('result').textContent = `Encomenda QR Code: ${encomendaNumber} (Now scanning Worker QR Code...)`;
+                resultElement.textContent = `Encomenda QR Code: ${encomendaNumber} (Now scanning Worker QR Code...)`;
                 codeReader.reset();
                 startWorkerScan(); // Call to scan worker QR code
             } catch (err) {
                 console.error('Scanning error:', err);
-                document.getElementById('result').textContent = `Error scanning Encomenda QR Code: ${err}`;
+                resultElement.textContent = `Error scanning Encomenda QR Code: ${err}`;
             }
         }
 
         // Function to start scanning for Worker QR Code
         async function startWorkerScan() {
-            document.getElementById('Readerh2').textContent = 'Scan Worker QR Code';
+            const readerHeader = document.getElementById('Readerh2');
+            const resultElement = document.getElementById('result');
+            if (!readerHeader || !resultElement) return;
+
+            readerHeader.textContent = 'Scan Worker QR Code';
             try {
                 const result = await codeReader.decodeFromInputVideoDevice(undefined, 'video');
                 workerNumber = result.text;
-                document.getElementById('result').textContent = `Worker QR Code: ${workerNumber}`;
+                resultElement.textContent = `Worker QR Code: ${workerNumber}`;
                 sendQRCodeData(encomendaNumber, workerNumber); // Send data to server
             } catch (err) {
                 console.error('Worker scanning error:', err);
-                document.getElementById('result').textContent = `Error scanning Worker QR Code: ${err}`;
+                resultElement.textContent = `Error scanning Worker QR Code: ${err}`;
             }
         }
 
         // Function to send QR Code data to the server
         async function sendQRCodeData(encomendaNumber, workerNumber) {
+            const detailsElement = document.getElementById('details');
+            const statusMessageElement = document.getElementById('statusMessage');
+            const detailsTextElement = document.getElementById('detailsText');
+            const resultElement = document.getElementById('result');
+            if (!detailsElement || !statusMessageElement || !detailsTextElement || !resultElement) return;
+
             try {
                 const response = await fetch('@Url.Page("Reader", "OnPost")', {
                     method: 'POST',
@@ -85,19 +99,22 @@
 
                 const data = await response.json();
                 if (data.success) {
-                    document.getElementById('details').style.display = 'block';
-                    document.getElementById('detailsText').textContent = `Encomenda Number: ${encomendaNumber}, Worker Number: ${workerNumber}`;
-                    document.getElementById('statusMessage').innerHTML = `<h2>${data.message}</h2>`;
+                    detailsElement.style.display = 'block';
+                    detailsTextElement.textContent = `Encomenda Number: ${encomendaNumber}, Worker Number: ${workerNumber}`;
+                    statusMessageElement.innerHTML = `<h2>${data.message}</h2>`;
                 } else {
-                    document.getElementById('statusMessage').innerHTML = `<h2>${data.message}</h2>`;
+                    statusMessageElement.innerHTML = `<h2>${data.message}</h2>`;
                 }
             } catch (err) {
                 console.error('Fetch error:', err);
-                document.getElementById('result').textContent = `Error sending data to server: ${err.message}`;
+                resultElement.textContent = `Error sending data to server: ${err.message}`;
             }
         }
 
         // Event listener for start scan button
-        document.getElementById('startScanButton').addEventListener('click', startScanning);
+        const startScanButton = document.getElementById('startScanButton');
+        if (startScanButton) {
+            startScanButton.addEventListener('click', startScanning);
+        }
     });
 </script>
