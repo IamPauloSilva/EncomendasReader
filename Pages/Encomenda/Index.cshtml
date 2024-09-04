@@ -28,11 +28,11 @@
         @foreach (var item in Model.EncomendaModel)
         {
             <tr>
-                <td>@item.EncomendaNumero</td>
-                <td>@item.Client.Id</td>
-                <td>@(item.Worker != null ? item.Worker.Name : "N/A")</td>
-                <td>@item.DataCriacao.ToShortDateString()</td>
-                <td>
+                <td class="text-center">@item.EncomendaNumero</td>
+                <td class="text-center">@item.Client.Id</td>
+                <td class="text-center">@(item.Worker != null ? item.Worker.Name : "N/A")</td>
+                <td class="text-center">@item.DataCriacao.ToShortDateString()</td>
+                <td class="text-center">
                     @if (item.DataInicioPreparacao.HasValue && item.DataInicioPreparacao != DateTime.MinValue)
                     {
                         @item.DataInicioPreparacao.Value.ToShortDateString()
@@ -42,7 +42,7 @@
                         <span>N/A</span>
                     }
                 </td>
-                <td>
+                <td class="text-center">
                     @if (item.DataFimPreparacao.HasValue && item.DataFimPreparacao != DateTime.MinValue)
                     {
                         @item.DataFimPreparacao.Value.ToShortDateString()
@@ -52,7 +52,7 @@
                         <span>N/A</span>
                     }
                 </td>
-                <td>@item.Status</td>
+                <td class="text-center">@item.Status</td>
                 <td>
                     <a asp-page="./Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm">Editar</a> |
                     <a asp-page="./Details" asp-route-id="@item.Id" class="btn btn-info btn-sm">Detalhes</a> |
