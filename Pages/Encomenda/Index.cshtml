@@ -33,9 +33,9 @@
                 <td>@(item.Worker != null ? item.Worker.Name : "N/A")</td>
                 <td>@item.DataCriacao.ToShortDateString()</td>
                 <td>
-                    @if (item.DataInicioPreparacao != DateTime.MinValue)
+                    @if (item.DataInicioPreparacao.HasValue && item.DataInicioPreparacao != DateTime.MinValue)
                     {
-                        @item.DataInicioPreparacao.ToShortDateString()
+                        @item.DataInicioPreparacao.Value.ToShortDateString()
                     }
                     else
                     {
@@ -43,9 +43,9 @@
                     }
                 </td>
                 <td>
-                    @if (item.DataInicioPreparacao != DateTime.MinValue)
+                    @if (item.DataFimPreparacao.HasValue && item.DataFimPreparacao != DateTime.MinValue)
                     {
-                        @item.DataFimPreparacao.ToShortDateString()
+                        @item.DataFimPreparacao.Value.ToShortDateString()
                     }
                     else
                     {

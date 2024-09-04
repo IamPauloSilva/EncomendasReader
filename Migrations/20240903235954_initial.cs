@@ -258,8 +258,8 @@ namespace EncomendasProject.Migrations
                     WorkerID = table.Column<int>(type: "int", nullable: true),
                     Status = table.Column<int>(type: "int", nullable: false),
                     DataCriacao = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    DataInicioPreparacao = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    DataFimPreparacao = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                    DataInicioPreparacao = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    DataFimPreparacao = table.Column<DateTime>(type: "datetime(6)", nullable: true)
                 },
                 constraints: table =>
                 {

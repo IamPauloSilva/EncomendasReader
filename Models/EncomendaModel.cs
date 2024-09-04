@@ -28,8 +28,8 @@ namespace Encomendas.Models
 
         public DateTime DataCriacao { get; set; } = DateTime.Now;
 
-        public DateTime DataInicioPreparacao { get; set; }
+        public DateTime? DataInicioPreparacao { get; set; }
 
-        public DateTime DataFimPreparacao { get; set; }
+        public DateTime? DataFimPreparacao { get; set; } 
     }
 }
