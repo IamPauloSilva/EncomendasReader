@@ -28,9 +28,7 @@
     </div>
 }
 
-<form method="post">
-    
-</form>
+<form method="post"></form>
 
 <script>
     window.addEventListener('load', () => {
@@ -39,68 +37,65 @@
         let workerNumber = '';
 
         // Function to start scanning process
-        const startScanning = () => {
+        async function startScanning() {
             document.getElementById('Readerh2').textContent = 'Scanning Encomenda QR Code...';
-            codeReader.decodeFromInputVideoDevice(undefined, 'video')
-                .then(result => {
-                    encomendaNumber = result.text;
-                    document.getElementById('result').textContent = `Encomenda QR Code: ${encomendaNumber} (Now scanning Worker QR Code...)`;
-                    codeReader.reset();
-                    startWorkerScan(); // Call to scan worker QR code
-                })
-                .catch(err => {
-                    console.error('Scanning error:', err);
-                    document.getElementById('result').textContent = `Error scanning Encomenda QR Code: ${err}`;
-                });
-        };
+            try {
+                const result = await codeReader.decodeFromInputVideoDevice(undefined, 'video');
+                encomendaNumber = result.text;
+                document.getElementById('result').textContent = `Encomenda QR Code: ${encomendaNumber} (Now scanning Worker QR Code...)`;
+                codeReader.reset();
+                startWorkerScan(); // Call to scan worker QR code
+            } catch (err) {
+                console.error('Scanning error:', err);
+                document.getElementById('result').textContent = `Error scanning Encomenda QR Code: ${err}`;
+            }
+        }
 
         // Function to start scanning for Worker QR Code
-        const startWorkerScan = () => {
+        async function startWorkerScan() {
             document.getElementById('Readerh2').textContent = 'Scan Worker QR Code';
-            codeReader.decodeFromInputVideoDevice(undefined, 'video')
-                .then(result => {
-                    workerNumber = result.text;
-                    document.getElementById('result').textContent = `Worker QR Code: ${workerNumber}`;
-                    sendQRCodeData(encomendaNumber, workerNumber); // Send data to server
-                })
-                .catch(err => {
-                    console.error('Worker scanning error:', err);
-                    document.getElementById('result').textContent = `Error scanning Worker QR Code: ${err}`;
-                });
-        };
+            try {
+                const result = await codeReader.decodeFromInputVideoDevice(undefined, 'video');
+                workerNumber = result.text;
+                document.getElementById('result').textContent = `Worker QR Code: ${workerNumber}`;
+                sendQRCodeData(encomendaNumber, workerNumber); // Send data to server
+            } catch (err) {
+                console.error('Worker scanning error:', err);
+                document.getElementById('result').textContent = `Error scanning Worker QR Code: ${err}`;
+            }
+        }
 
         // Function to send QR Code data to the server
-        const sendQRCodeData = (encomendaNumber, workerNumber) => {
-            fetch('@Url.Page("Reader", "OnPost")', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded'
-                },
-                body: new URLSearchParams({
-                    'QRCodeData': `${encomendaNumber}_${workerNumber}`
-                })
-            })
-                .then(response => {
-                    if (!response.ok) {
-                        console.error('HTTP error:', response.status, response.statusText);
-                        throw new Error(`Network response was not ok: ${response.statusText}`);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    if (data.success) {
-                        document.getElementById('details').style.display = 'block';
-                        document.getElementById('detailsText').textContent = `Encomenda Number: ${encomendaNumber}, Worker Number: ${workerNumber}`;
-                        document.getElementById('statusMessage').innerHTML = `<h2>${data.message}</h2>`;
-                    } else {
-                        document.getElementById('statusMessage').innerHTML = `<h2>${data.message}</h2>`;
-                    }
-                })
-                .catch(err => {
-                    console.error('Fetch error:', err);
-                    document.getElementById('result').textContent = `Error sending data to server: ${err.message}`;
+        async function sendQRCodeData(encomendaNumber, workerNumber) {
+            try {
+                const response = await fetch('@Url.Page("Reader", "OnPost")', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: new URLSearchParams({
+                        'QRCodeData': `${encomendaNumber}_${workerNumber}`
+                    })
                 });
-        };
+
+                if (!response.ok) {
+                    console.error('HTTP error:', response.status, response.statusText);
+                    throw new Error(`Network response was not ok: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                if (data.success) {
+                    document.getElementById('details').style.display = 'block';
+                    document.getElementById('detailsText').textContent = `Encomenda Number: ${encomendaNumber}, Worker Number: ${workerNumber}`;
+                    document.getElementById('statusMessage').innerHTML = `<h2>${data.message}</h2>`;
+                } else {
+                    document.getElementById('statusMessage').innerHTML = `<h2>${data.message}</h2>`;
+                }
+            } catch (err) {
+                console.error('Fetch error:', err);
+                document.getElementById('result').textContent = `Error sending data to server: ${err.message}`;
+            }
+        }
 
         // Event listener for start scan button
         document.getElementById('startScanButton').addEventListener('click', startScanning);
