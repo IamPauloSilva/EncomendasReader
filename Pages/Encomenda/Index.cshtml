@@ -9,28 +9,28 @@
     <a asp-page="/Encomenda/Create" class="btn btn-primary">Criar nova Encomenda</a>
 </p>
 
-<table class="table table-striped text-center" id="Table-Data">
+<table class="table table-striped" id="Table-Data">
     <thead>
         <tr>
-            <th>Numero encomenda</th>
-            <th>Cliente</th>
-            <th>Colaborador</th>
-            <th>Data de Criação</th>
-            <th>Data Inicio Preparação</th>
-            <th>Data Fim Preparação</th>
-            <th>Estado</th>
-            <th>Ações</th> <!-- Texto atualizado para ser mais descritivo -->
+            <th class="text-center">Numero encomenda</th>
+            <th class="text-center">Cliente</th>
+            <th class="text-center">Colaborador</th>
+            <th class="text-center">Data de Criação</th>
+            <th class="text-center">Data Inicio Preparação</th>
+            <th class="text-center">Data Fim Preparação</th>
+            <th class="text-center">Estado</th>
+            <th class="text-center">Ações</th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model.EncomendaModel)
         {
             <tr>
-                <td>@item.EncomendaNumero</td>
-                <td>@item.Client.Id</td>
-                <td>@(item.Worker != null ? item.Worker.Name : "N/A")</td>
-                <td>@item.DataCriacao.ToShortDateString()</td>
-                <td>
+                <td class="text-center">@item.EncomendaNumero</td>
+                <td class="text-center">@item.Client.Id</td>
+                <td class="text-center">@(item.Worker != null ? item.Worker.Name : "N/A")</td>
+                <td class="text-center">@item.DataCriacao.ToShortDateString()</td>
+                <td class="text-center">
                     @if (item.DataInicioPreparacao.HasValue && item.DataInicioPreparacao != DateTime.MinValue)
                     {
                         @item.DataInicioPreparacao.Value.ToShortDateString()
@@ -40,7 +40,7 @@
                         <span>N/A</span>
                     }
                 </td>
-                <td>
+                <td class="text-center">
                     @if (item.DataFimPreparacao.HasValue && item.DataFimPreparacao != DateTime.MinValue)
                     {
                         @item.DataFimPreparacao.Value.ToShortDateString()
@@ -50,8 +50,8 @@
                         <span>N/A</span>
                     }
                 </td>
-                <td>@item.Status</td>
-                <td>
+                <td class="text-center">@item.Status</td>
+                <td class="text-center">
                     <a asp-page="./Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm">Editar</a> |
                     <a asp-page="./Details" asp-route-id="@item.Id" class="btn btn-info btn-sm">Detalhes</a> |
                     <a asp-page="./Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm">Apagar</a>
