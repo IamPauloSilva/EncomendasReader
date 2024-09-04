@@ -90,6 +90,7 @@
         };
 
         // Function to send QR Code data to the server
+        // Function to send QR Code data to the server
         const sendQRCodeData = async (encomendaNumber, workerNumber) => {
             try {
                 const response = await fetch('@Url.Page("Reader", "OnPost")', {
@@ -116,8 +117,14 @@
                         icon: 'success',
                         confirmButtonText: 'OK'
                     }).then(() => {
-                        document.getElementById('details').style.display = 'block';
-                        document.getElementById('detailsText').textContent = `Encomenda Number: ${encomendaNumber}, Worker Number: ${workerNumber}`;
+                        // Limpa o conteúdo dos elementos após a confirmação do SweetAlert2
+                        document.getElementById('details').style.display = 'none'; // Oculta os detalhes
+                        document.getElementById('detailsText').textContent = ''; // Limpa o texto dos detalhes
+                        document.getElementById('result').textContent = 'Waiting for scan...'; // Restaura o texto inicial
+
+                        // Reseta as variáveis
+                        encomendaNumber = '';
+                        workerNumber = '';
                     });
                 } else {
                     Swal.fire({
@@ -137,6 +144,7 @@
                 });
             }
         };
+
 
         // Event listener for start scan button
         document.getElementById('startScanButton').addEventListener('click', startScanning);
