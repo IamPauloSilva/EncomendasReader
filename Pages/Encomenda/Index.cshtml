@@ -5,13 +5,11 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
-
 <p>
     <a asp-page="/Encomenda/Create" class="btn btn-primary">Criar nova Encomenda</a>
 </p>
 
-<table class="table table-striped" id="Table-Data">
+<table class="table table-striped text-center" id="Table-Data">
     <thead>
         <tr>
             <th>Numero encomenda</th>
@@ -21,18 +19,18 @@
             <th>Data Inicio Preparação</th>
             <th>Data Fim Preparação</th>
             <th>Estado</th>
-            <th></th>
+            <th>Ações</th> <!-- Texto atualizado para ser mais descritivo -->
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model.EncomendaModel)
         {
             <tr>
-                <td class="text-center">@item.EncomendaNumero</td>
-                <td class="text-center">@item.Client.Id</td>
-                <td class="text-center">@(item.Worker != null ? item.Worker.Name : "N/A")</td>
-                <td class="text-center">@item.DataCriacao.ToShortDateString()</td>
-                <td class="text-center">
+                <td>@item.EncomendaNumero</td>
+                <td>@item.Client.Id</td>
+                <td>@(item.Worker != null ? item.Worker.Name : "N/A")</td>
+                <td>@item.DataCriacao.ToShortDateString()</td>
+                <td>
                     @if (item.DataInicioPreparacao.HasValue && item.DataInicioPreparacao != DateTime.MinValue)
                     {
                         @item.DataInicioPreparacao.Value.ToShortDateString()
@@ -42,7 +40,7 @@
                         <span>N/A</span>
                     }
                 </td>
-                <td class="text-center">
+                <td>
                     @if (item.DataFimPreparacao.HasValue && item.DataFimPreparacao != DateTime.MinValue)
                     {
                         @item.DataFimPreparacao.Value.ToShortDateString()
@@ -52,7 +50,7 @@
                         <span>N/A</span>
                     }
                 </td>
-                <td class="text-center">@item.Status</td>
+                <td>@item.Status</td>
                 <td>
                     <a asp-page="./Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm">Editar</a> |
                     <a asp-page="./Details" asp-route-id="@item.Id" class="btn btn-info btn-sm">Detalhes</a> |
@@ -62,4 +60,3 @@
         }
     </tbody>
 </table>
-
