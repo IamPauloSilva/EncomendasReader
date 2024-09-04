@@ -109,9 +109,10 @@
 
                 const data = await response.json();
                 if (data.success) {
+                    // Exibe a mensagem de sucesso incluindo o status da encomenda
                     Swal.fire({
                         title: 'Success',
-                        text: `Encomenda Number: ${encomendaNumber}, Worker Number: ${workerNumber}`,
+                        text: `Encomenda Number: ${encomendaNumber}, Worker Number: ${workerNumber}. Status: ${data.status}. ${data.message}`,
                         icon: 'success',
                         confirmButtonText: 'OK'
                     }).then(() => {
