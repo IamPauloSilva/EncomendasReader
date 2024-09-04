@@ -1,13 +1,3 @@
-@page
-@model EncomendasProject.Pages.Reader.ReaderModel
-
-@using Encomendas.Models
-@using System.Net.NetworkInformation
-
-@{
-    ViewData["Title"] = "Read QR Codes";
-}
-
 <h1>QR Code Scanner</h1>
 <div>
     <h2 id="Readerh2">Scan Encomenda QR Code</h2>
@@ -37,50 +27,60 @@
         let workerNumber = '';
 
         // Function to start scanning process
-        async function startScanning() {
-            const readerHeader = document.getElementById('Readerh2');
-            const resultElement = document.getElementById('result');
-            if (!readerHeader || !resultElement) return;
+        const startScanning = async () => {
+            Swal.fire({
+                title: 'Scanning Encomenda QR Code...',
+                text: 'Please wait.',
+                icon: 'info',
+                showConfirmButton: false,
+                timer: 2000
+            });
 
-            readerHeader.textContent = 'Scanning Encomenda QR Code...';
             try {
                 const result = await codeReader.decodeFromInputVideoDevice(undefined, 'video');
                 encomendaNumber = result.text;
-                resultElement.textContent = `Encomenda QR Code: ${encomendaNumber} (Now scanning Worker QR Code...)`;
+                document.getElementById('result').textContent = `Encomenda QR Code: ${encomendaNumber} (Now scanning Worker QR Code...)`;
                 codeReader.reset();
                 startWorkerScan(); // Call to scan worker QR code
             } catch (err) {
                 console.error('Scanning error:', err);
-                resultElement.textContent = `Error scanning Encomenda QR Code: ${err}`;
+                Swal.fire({
+                    title: 'Error',
+                    text: `Error scanning Encomenda QR Code: ${err}`,
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
             }
-        }
+        };
 
         // Function to start scanning for Worker QR Code
-        async function startWorkerScan() {
-            const readerHeader = document.getElementById('Readerh2');
-            const resultElement = document.getElementById('result');
-            if (!readerHeader || !resultElement) return;
+        const startWorkerScan = async () => {
+            Swal.fire({
+                title: 'Scan Worker QR Code',
+                text: 'Please scan the worker QR code.',
+                icon: 'info',
+                showConfirmButton: false,
+                timer: 2000
+            });
 
-            readerHeader.textContent = 'Scan Worker QR Code';
             try {
                 const result = await codeReader.decodeFromInputVideoDevice(undefined, 'video');
                 workerNumber = result.text;
-                resultElement.textContent = `Worker QR Code: ${workerNumber}`;
+                document.getElementById('result').textContent = `Worker QR Code: ${workerNumber}`;
                 sendQRCodeData(encomendaNumber, workerNumber); // Send data to server
             } catch (err) {
                 console.error('Worker scanning error:', err);
-                resultElement.textContent = `Error scanning Worker QR Code: ${err}`;
+                Swal.fire({
+                    title: 'Error',
+                    text: `Error scanning Worker QR Code: ${err}`,
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
             }
-        }
+        };
 
         // Function to send QR Code data to the server
-        async function sendQRCodeData(encomendaNumber, workerNumber) {
-            const detailsElement = document.getElementById('details');
-            const statusMessageElement = document.getElementById('statusMessage');
-            const detailsTextElement = document.getElementById('detailsText');
-            const resultElement = document.getElementById('result');
-            if (!detailsElement || !statusMessageElement || !detailsTextElement || !resultElement) return;
-
+        const sendQRCodeData = async (encomendaNumber, workerNumber) => {
             try {
                 const response = await fetch('@Url.Page("Reader", "OnPost")', {
                     method: 'POST',
@@ -99,22 +99,35 @@
 
                 const data = await response.json();
                 if (data.success) {
-                    detailsElement.style.display = 'block';
-                    detailsTextElement.textContent = `Encomenda Number: ${encomendaNumber}, Worker Number: ${workerNumber}`;
-                    statusMessageElement.innerHTML = `<h2>${data.message}</h2>`;
+                    Swal.fire({
+                        title: 'Success',
+                        text: `Encomenda Number: ${encomendaNumber}, Worker Number: ${workerNumber}`,
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                        document.getElementById('details').style.display = 'block';
+                        document.getElementById('detailsText').textContent = `Encomenda Number: ${encomendaNumber}, Worker Number: ${workerNumber}`;
+                    });
                 } else {
-                    statusMessageElement.innerHTML = `<h2>${data.message}</h2>`;
+                    Swal.fire({
+                        title: 'Error',
+                        text: data.message,
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
                 }
             } catch (err) {
                 console.error('Fetch error:', err);
-                resultElement.textContent = `Error sending data to server: ${err.message}`;
+                Swal.fire({
+                    title: 'Error',
+                    text: `Error sending data to server: ${err.message}`,
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
             }
-        }
+        };
 
         // Event listener for start scan button
-        const startScanButton = document.getElementById('startScanButton');
-        if (startScanButton) {
-            startScanButton.addEventListener('click', startScanning);
-        }
+        document.getElementById('startScanButton').addEventListener('click', startScanning);
     });
 </script>
