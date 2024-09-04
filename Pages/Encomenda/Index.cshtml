@@ -8,19 +8,19 @@
 <h1>Index</h1>
 
 <p>
-    <a asp-page="/Encomenda/Create" class="btn btn-primary">Create New</a>
+    <a asp-page="/Encomenda/Create" class="btn btn-primary">Criar nova Encomenda</a>
 </p>
 
 <table class="table table-striped" id="Table-Data">
     <thead>
         <tr>
-            <th>@Html.DisplayNameFor(model => model.EncomendaModel[0].EncomendaNumero)</th>
-            <th>@Html.DisplayNameFor(model => model.EncomendaModel[0].Client)</th>
-            <th>@Html.DisplayNameFor(model => model.EncomendaModel[0].Worker)</th>
-            <th>@Html.DisplayNameFor(model => model.EncomendaModel[0].DataCriacao)</th>
-            <th>@Html.DisplayNameFor(model => model.EncomendaModel[0].DataInicioPreparacao)</th>
-            <th>@Html.DisplayNameFor(model => model.EncomendaModel[0].DataFimPreparacao)</th>
-            <th>@Html.DisplayNameFor(model => model.EncomendaModel[0].Status)</th>
+            <th>Numero encomenda</th>
+            <th>Cliente</th>
+            <th>Colaborador</th>
+            <th>Data de Criação</th>
+            <th>Data Inicio Preparação</th>
+            <th>Data Fim Preparação</th>
+            <th>Estado</th>
             <th></th>
         </tr>
     </thead>
@@ -54,9 +54,9 @@
                 </td>
                 <td>@item.Status</td>
                 <td>
-                    <a asp-page="./Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm">Edit</a> |
-                    <a asp-page="./Details" asp-route-id="@item.Id" class="btn btn-info btn-sm">Details</a> |
-                    <a asp-page="./Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm">Delete</a>
+                    <a asp-page="./Edit" asp-route-id="@item.Id" class="btn btn-warning btn-sm">Editar</a> |
+                    <a asp-page="./Details" asp-route-id="@item.Id" class="btn btn-info btn-sm">Detalhes</a> |
+                    <a asp-page="./Delete" asp-route-id="@item.Id" class="btn btn-danger btn-sm">Apagar</a>
                 </td>
             </tr>
         }
